@@ -1,28 +1,41 @@
-import pysrt
+"""Shows the number of times each word is used in a subtitle"""
 import re
 from collections import Counter
 
-def fix_capital(string):
-    if string.isupper():
-        return string
-    return string.lower()
+import pysrt
 
-def get_word_counts(srt_path):
+
+def fix_capital(word):
+    """Converts to lower case if not a fully upper cased word"""
+    if word.isupper():
+        return word
+    return word.lower()
+
+
+def get_all_subtitle_text(srt_path):
+    """Returns a string of the text content of the given .srt file"""
     subs = pysrt.open(srt_path)
-    freq = Counter()
-    for s in subs:
-        words = map(fix_capital, re.findall('\w+', s.text))
-        freq.update(words)
-    return freq
+    texts = [s.text for s in subs]
+    return '\n\n'.join(texts)
 
-def print_word_counts(word_counts):
-    for word, count in word_counts.most_common():
-        if len(word) > 2:
-            print count, word
+
+def get_words(text):
+    """Returns a list of the words in the given text"""
+    words = re.findall('\w+', text, re.MULTILINE)
+    return words
+
+
+def print_word_counts(words):
+    """Prints the most common words in order with their count"""
+    for word, count in Counter(words).most_common():
+        print count, word
+
 
 def analyse_srt(srt_path):
-    counts = get_word_counts(srt_path)
-    print_word_counts(counts)
+    text = get_all_subtitle_text(srt_path)
+    words = get_words(text)
+    words = map(fix_capital, words)
+    print_word_counts(Counter(words))
 
 if __name__ == '__main__':
     analyse_srt('DemoData/sintel_en.srt')
