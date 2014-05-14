@@ -35,7 +35,7 @@ def analyse_srt(srt_path):
     text = get_all_subtitle_text(srt_path)
     words = get_words(text)
     words = map(fix_capital, words)
-    print_word_counts(Counter(words))
+    print_word_counts(words)
 
 if __name__ == '__main__':
     analyse_srt('DemoData/sintel_en.srt')
